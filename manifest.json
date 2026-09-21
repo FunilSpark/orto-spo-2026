@@ -1,0 +1,17 @@
+{
+  "name": "Orto SPO 2026 — Captação de Leads",
+  "short_name": "Orto SPO 2026",
+  "description": "Captação de leads do evento Orto SPO 2026 — Spark/Ormco",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#1D4E45",
+  "theme_color": "#1D4E45",
+  "orientation": "portrait-primary",
+  "icons": [
+    {"src": "orto-icon-192.png","sizes": "192x192","type": "image/png","purpose": "any maskable"},
+    {"src": "orto-icon-512.png","sizes": "512x512","type": "image/png","purpose": "any maskable"}
+  ],
+  "categories": ["business","productivity"],
+  "lang": "pt-BR"
+}

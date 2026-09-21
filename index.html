@@ -10,6 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Orto SPO 2026">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#1D4E45">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="orto-icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -317,6 +319,13 @@ document.getElementById('sec-cadastro').style.display='block';
 
 loadData();
 setInterval(()=>loadData(true),15000);
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
 </script>
 </body>
 </html>
