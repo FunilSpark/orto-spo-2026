@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Orto SPO 2026">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#1D4E45">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="orto-manifest.json">
 <link rel="apple-touch-icon" href="orto-icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 <style>
@@ -127,6 +127,21 @@ body{font-family:Arial,sans-serif;background:#F3F4F6;color:#1A1A1A;font-size:14p
       <label>E-mail <span class="opt">(opcional)</span></label>
       <input id="f-email" placeholder="email@exemplo.com" type="email" autocomplete="off">
     </div>
+    <div class="fg">
+      <label>Interesse <span class="opt">(opcional)</span></label>
+      <select id="f-interesse">
+        <option value="">Selecione...</option>
+        <option value="Combo Dexis 3800W (IOS)">Combo Dexis 3800W (IOS)</option>
+        <option value="Combo Dexis Imprevo (IOS)">Combo Dexis Imprevo (IOS)</option>
+        <option value="Credenciamento Spark (Presencial)">Credenciamento Spark (Presencial)</option>
+        <option value="Credenciamento Spark (Online)">Credenciamento Spark (Online)</option>
+        <option value="Credenciamento Damon (Online)">Credenciamento Damon (Online)</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Observação <span class="opt">(opcional)</span></label>
+      <input id="f-obs" placeholder="Anotações sobre o lead" autocomplete="off">
+    </div>
     <button class="btn-submit" id="btnSubmit" onclick="submitLead()">
       <i class="ti ti-plus"></i> Cadastrar Lead
     </button>
@@ -212,7 +227,7 @@ function renderAll(){
     return;
   }
   body.innerHTML=data.map(d=>`<div class="list-row">
-    <div><div class="list-name">${d.nome||'–'}</div>${d.email?'<div class="list-sub">'+d.email+'</div>':''}</div>
+    <div><div class="list-name">${d.nome||'–'}</div>${d.email?'<div class="list-sub">'+d.email+'</div>':''}${d.interesse?'<div class="list-sub" style="color:#1D9E75;font-weight:600">'+d.interesse+'</div>':''}</div>
     <div style="font-size:12px">${d.cidade_estado||'–'}${d.bairro?'<div class="list-sub">'+d.bairro+'</div>':''}</div>
     <div><span class="exec-tag">${(d.executivo||'').split(' ')[0]||'–'}</span></div>
     <div style="font-size:12px;color:#6B7280">${d.telefone||'–'}</div>
@@ -227,6 +242,8 @@ async function submitLead(){
   const bairro=v('f-bairro');
   const exec=v('f-exec');
   const email=v('f-email');
+  const interesse=v('f-interesse');
+  const obs=v('f-obs');
 
   if(!nome){alert('Informe o nome do dentista');return;}
   if(!tel){alert('Informe o telefone');return;}
@@ -246,7 +263,9 @@ async function submitLead(){
       cidade_estado:cidade,
       bairro:bairro||null,
       executivo:exec,
-      email:email||null
+      email:email||null,
+      interesse:interesse||null,
+      observacao:obs||null
     });
     document.getElementById('f-nome').value='';
     document.getElementById('f-bairro').value='';
@@ -254,6 +273,8 @@ async function submitLead(){
     document.getElementById('f-cidade').value='';
     document.getElementById('f-exec').value='';
     document.getElementById('f-email').value='';
+    document.getElementById('f-interesse').value='';
+    document.getElementById('f-obs').value='';
 
     const sb=document.getElementById('successBox');
     sb.classList.add('show');
@@ -291,6 +312,8 @@ function exportCSV(){
     ['bairro','Bairro'],
     ['executivo','Executivo/Gerente'],
     ['email','E-mail'],
+    ['interesse','Interesse'],
+    ['observacao','Observação'],
     ['created_at','Data de Cadastro'],
   ];
   const esc=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
@@ -323,7 +346,7 @@ setInterval(()=>loadData(true),15000);
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+    navigator.serviceWorker.register('orto-sw.js').catch(()=>{});
   });
 }
 </script>
