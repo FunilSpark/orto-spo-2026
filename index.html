@@ -48,15 +48,17 @@ body{font-family:Arial,sans-serif;background:#F3F4F6;color:#1A1A1A;font-size:14p
 .success-box h3{font-size:16px;color:#14532D;margin:8px 0 4px}
 .success-box p{font-size:12px;color:#166534}
 .list-table{background:#fff;border-radius:10px;border:1px solid #E5E7EB;overflow:hidden}
-.list-hdr,.list-row{display:grid;grid-template-columns:2fr 1.3fr 1.2fr 1.2fr;gap:8px;padding:11px 14px;align-items:center;font-size:12px}
+.list-hdr,.list-row{display:grid;grid-template-columns:2fr 1.3fr 1.2fr 1.2fr .5fr;gap:8px;padding:11px 14px;align-items:center;font-size:12px}
 .list-hdr{background:#F9FAFB;font-weight:700;color:#6B7280;border-bottom:1px solid #E5E7EB}
 .list-row{border-bottom:1px solid #F3F4F6}
+.btn-del{background:transparent;border:none;color:#EF4444;cursor:pointer;font-size:16px;padding:4px;display:flex;align-items:center;justify-content:center}
+.btn-del:hover{color:#B91C1C}
 .list-name{font-weight:700;font-size:13px}
 .list-sub{font-size:11px;color:#9CA3AF}
 .list-empty{text-align:center;padding:40px;color:#9CA3AF;font-size:13px}
 .exec-tag{font-size:10px;background:#E8F5F0;color:#1D4E45;padding:2px 7px;border-radius:10px;display:inline-block}
 @media(max-width:480px){
-  .list-hdr,.list-row{grid-template-columns:2fr 1.2fr 1.2fr;}
+  .list-hdr,.list-row{grid-template-columns:2fr 1.2fr 1.2fr .4fr;}
   .list-hdr span:nth-child(4),.list-row>*:nth-child(4){display:none}
 }
 </style>
@@ -135,7 +137,7 @@ body{font-family:Arial,sans-serif;background:#F3F4F6;color:#1A1A1A;font-size:14p
     <div class="metric"><div class="metric-val" id="m-hoje2">0</div><div class="metric-lbl">Hoje</div></div>
   </div>
   <div class="list-table">
-    <div class="list-hdr"><span>Dentista</span><span>Cidade/UF</span><span>Executivo</span><span>Telefone</span></div>
+    <div class="list-hdr"><span>Dentista</span><span>Cidade/UF</span><span>Executivo</span><span>Telefone</span><span></span></div>
     <div id="lista-body"></div>
   </div>
 </div>
@@ -167,6 +169,10 @@ async function sbInsert(rec){
   const r=await fetch(SB_URL+'/rest/v1/orto_sp_2026',{method:'POST',headers:HDR,body:JSON.stringify(rec)});
   if(!r.ok)throw new Error(await r.text());
   return r.json();
+}
+async function sbDelete(id){
+  const r=await fetch(SB_URL+'/rest/v1/orto_sp_2026?id=eq.'+id,{method:'DELETE',headers:HDR});
+  if(!r.ok)throw new Error(await r.text());
 }
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
@@ -208,6 +214,7 @@ function renderAll(){
     <div style="font-size:12px">${d.cidade_estado||'–'}${d.bairro?'<div class="list-sub">'+d.bairro+'</div>':''}</div>
     <div><span class="exec-tag">${(d.executivo||'').split(' ')[0]||'–'}</span></div>
     <div style="font-size:12px;color:#6B7280">${d.telefone||'–'}</div>
+    <div><button class="btn-del" onclick="deleteLead('${d.id}','${(d.nome||'').replace(/'/g,"\\'")}')"><i class="ti ti-trash"></i></button></div>
   </div>`).join('');
 }
 
@@ -258,6 +265,18 @@ async function submitLead(){
   }finally{
     btn.disabled=false;
     btn.innerHTML='<i class="ti ti-plus"></i> Cadastrar Lead';
+  }
+}
+
+async function deleteLead(id,nome){
+  if(!confirm('Excluir o lead de '+nome+'?'))return;
+  setSS('sync');
+  try{
+    await sbDelete(id);
+    await loadData(true);
+  }catch(e){
+    setSS('error');
+    alert('Erro ao excluir: '+e.message);
   }
 }
 
